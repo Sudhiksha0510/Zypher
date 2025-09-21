@@ -10,7 +10,6 @@ st.set_page_config(
 )
 
 # --- MOCK DATA ---
-# In a real app, this would come from a database.
 COURSE_DATA = {
     "Computer Science & Engineering": {
         3: ["Data Structures & Algorithms", "Discrete Mathematics", "Digital Logic Design", "Object Oriented Programming"],
@@ -52,16 +51,13 @@ def get_image_as_base64(file):
     return base64.b64encode(data).decode()
 
 # --- STYLING ---
-# Using the same styling as the login page for consistency
-# Make sure your logo is accessible at the path "../zypher.png" if this file is in a 'pages' folder
 try:
     logo_base64 = get_image_as_base64("../zypher.png")
 except FileNotFoundError:
-    # Fallback if the image is in the same directory (for standalone running)
     try:
         logo_base64 = get_image_as_base64("zypher.png")
     except FileNotFoundError:
-        logo_base64 = "" # Set a default empty string if no logo is found
+        logo_base64 = ""
 
 
 page_styling = f"""
@@ -77,13 +73,57 @@ page_styling = f"""
         visibility: hidden;
     }}
     
-    /* --- Main Content Container --- */
+    /* --- NEW NAVIGATION BAR STYLING --- */
+    .navbar {{
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 30px;
+        background: rgba(255, 255, 255, 0.3);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        z-index: 1000;
+        box-sizing: border-box;
+    }}
+    .navbar .logo-brand {{
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }}
+    .navbar .logo-img {{
+        width: 40px;
+        height: 40px;
+    }}
+    .navbar .brand-name {{
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: #002e00;
+        text-decoration: none;
+    }}
+    .navbar .nav-links a {{
+        color: #004d00;
+        text-decoration: none;
+        margin: 0 15px;
+        font-weight: 500;
+        transition: color 0.3s;
+    }}
+    .navbar .nav-links a.active, .navbar .nav-links a:hover {{
+        color: #002e00;
+        font-weight: 600;
+    }}
+    
+    /* --- Main Content Container (Adjusted for Navbar) --- */
     .main-container {{
         display: flex;
         flex-direction: column;
-        align-items: center;
-        padding: 2rem;
-        color: #002e00; /* Darker base text color for better contrast */
+        align-items: flex-start; /* EDITED: Changed from 'center' to 'flex-start' to left-align the card */
+        padding: 80px 2rem 2rem 2rem; /* Added padding-top to push content below navbar */
+        color: #002e00; s
     }}
 
     /* --- Glass Card for the Form --- */
@@ -97,67 +137,52 @@ page_styling = f"""
         padding: 30px;
         width: 100%;
         max-width: 700px;
-        text-align: center;
-    }}
-    
-    .logo {{
-        width: 80px;
-        margin-bottom: 10px;
+        text-align: left; /* EDITED: Changed from 'center' to 'left' to align text */
     }}
 
     h1 {{
         font-size: 2.2rem;
         margin-bottom: 5px;
-        color: #12420B !important; /* Dark green for main title */
+        color: #002e00 !important;
     }}
 
     p.subtitle {{
         font-size: 1.1rem;
         margin-bottom: 25px;
-        color: #004d00; /* A strong, readable green */
+        color: #004d00;
     }}
 
     /* --- Styling Streamlit Widgets for HIGH CONTRAST --- */
-
-    /* Style for widget labels (e.g., "Select Your Course") */
     label[data-baseweb="form-control-label"] {{
         color: #002e00 !important;
         font-weight: 600 !important;
         text-align: left;
     }}
-    
-    /* --- Selectbox & Multiselect --- */
     div[data-baseweb="select"] > div:first-child,
     div[data-baseweb="multiselect"] > div:first-child {{
         background-color: #FFFFFF !important;
         border: 1px solid rgba(0, 0, 0, 0.2) !important;
         border-radius: 8px !important;
-        color: #002e00 !important; /* Dark text for input */
+        color: #002e00 !important;
     }}
-    /* Ensure text typed is dark */
     div[data-baseweb="select"] input,
     div[data-baseweb="multiselect"] input {{
         color: #002e00 !important; 
     }}
-    
-    /* --- Radio buttons --- */
     [data-testid="stRadio"] label {{
         padding: 5px 15px;
         border-radius: 8px;
         background: rgba(255, 255, 255, 0.8);
         margin: 0 5px;
         transition: background-color 0.3s;
-        color: #004d00; /* Dark green text for unselected options */
+        color: #004d00;
         border: 1px solid rgba(0, 0, 0, 0.2);
     }}
-    /* Style for selected radio button */
     [data-testid="stRadio"] label:has(input:checked) {{
-        background-color: #4CAF50; /* A standard, high-contrast green */
+        background-color: #4CAF50;
         color: white;
         border: 1px solid #4CAF50;
     }}
-
-    /* --- Form Submit Button --- */
     [data-testid="stFormSubmitButton"] button {{
         width: 100%;
         padding: 15px;
@@ -180,11 +205,30 @@ st.markdown(page_styling, unsafe_allow_html=True)
 
 
 # --- PAGE LAYOUT ---
-st.markdown(f'<div class="main-container">', unsafe_allow_html=True)
-st.markdown(f'<div class="form-card">', unsafe_allow_html=True)
 
-if logo_base64:
-    st.markdown(f'<img src="data:image/png;base64,{logo_base64}" alt="Zypher Logo" class="logo">', unsafe_allow_html=True)
+# --- NEW NAVIGATION BAR ---
+logo_html = f'<img src="data:image/png;base64,{logo_base64}" class="logo-img">' if logo_base64 else ''
+st.markdown(f"""
+    <div class="navbar">
+        <div class="logo-brand">
+            {logo_html}
+            <a href="#" class="brand-name">Zypher</a>
+        </div>
+        <div class="nav-links">
+            <a href="#" class="active">Home</a>
+            <a href="#">My Plan</a>
+            <a href="#">Profile</a>
+        </div>
+    </div>
+""", unsafe_allow_html=True)
+
+
+# --- MAIN CONTENT ---
+st.markdown('<div class="main-container">', unsafe_allow_html=True)
+st.markdown('<div class="form-card">', unsafe_allow_html=True)
+
+# Note: We don't need the logo here anymore as it's in the navbar
+# st.markdown(f'<img src="data:image/png;base64,{logo_base64}" alt="Zypher Logo" class="logo">', unsafe_allow_html=True)
 
 st.markdown('<h1>Build Your Path</h1>', unsafe_allow_html=True)
 st.markdown('<p class="subtitle">Tell us about your academic journey and passions.</p>', unsafe_allow_html=True)
@@ -192,23 +236,18 @@ st.markdown('<p class="subtitle">Tell us about your academic journey and passion
 
 # --- FORM ---
 with st.form("user_details_form"):
-    # --- Course and Semester Selection ---
     course = st.selectbox(
         "📚 Select Your Course",
         options=list(COURSE_DATA.keys()),
         index=None,
         placeholder="Choose your field of study"
     )
-
     semester = st.radio(
         "🗓️ Select Your Current Semester",
-        options=[3, 4, 5], # Example semesters
+        options=[3, 4, 5],
         horizontal=True
     )
-    
-    st.markdown("<br>", unsafe_allow_html=True) # Spacer
-
-    # --- Dynamic Subject Selection ---
+    st.markdown("<br>", unsafe_allow_html=True)
     subjects = []
     if course and semester:
         subjects = st.multiselect(
@@ -218,15 +257,11 @@ with st.form("user_details_form"):
         )
     else:
         st.info("Please select a course and semester to see your subjects.")
-
-    # --- Interests Selection ---
     interests = st.multiselect(
         "💡 What are your interests?",
         options=INTERESTS_LIST,
         placeholder="Select skills you want to learn (e.g., AI, Web Dev)"
     )
-
-    # --- Submit Button ---
     submitted = st.form_submit_button("Generate My Plan")
 
 
