@@ -1,8 +1,6 @@
+#home.py
 import streamlit as st
 import base64
-import os
-# --- NEW IMPORT ---
-from rag_engine import generate_plan_with_rag
 
 # --- PAGE CONFIGURATION ---
 st.set_page_config(
@@ -49,18 +47,19 @@ INTERESTS_LIST = [
 
 # --- HELPER FUNCTION TO ENCODE IMAGE ---
 def get_image_as_base64(file):
-    if not os.path.exists(file):
-        st.error(f"Logo file not found: {file}")
-        return ""
     with open(file, "rb") as f:
         data = f.read()
     return base64.b64encode(data).decode()
 
 # --- STYLING ---
 try:
-    logo_base64 = get_image_as_base64("zypher.png")
+    logo_base64 = get_image_as_base64("../zypher.png")
 except FileNotFoundError:
-    logo_base64 = ""
+    try:
+        logo_base64 = get_image_as_base64("zypher.png")
+    except FileNotFoundError:
+        logo_base64 = ""
+
 
 page_styling = f"""
 <style>
@@ -123,9 +122,9 @@ page_styling = f"""
     .main-container {{
         display: flex;
         flex-direction: column;
-        align-items: flex-start;
-        padding: 80px 2rem 2rem 2rem;
-        color: #002e00;
+        align-items: flex-start; /* EDITED: Changed from 'center' to 'flex-start' to left-align the card */
+        padding: 80px 2rem 2rem 2rem; /* Added padding-top to push content below navbar */
+        color: #002e00; s
     }}
 
     /* --- Glass Card for the Form --- */
@@ -139,7 +138,7 @@ page_styling = f"""
         padding: 30px;
         width: 100%;
         max-width: 700px;
-        text-align: left;
+        text-align: left; /* EDITED: Changed from 'center' to 'left' to align text */
     }}
 
     h1 {{
@@ -229,6 +228,9 @@ st.markdown(f"""
 st.markdown('<div class="main-container">', unsafe_allow_html=True)
 st.markdown('<div class="form-card">', unsafe_allow_html=True)
 
+# Note: We don't need the logo here anymore as it's in the navbar
+# st.markdown(f'<img src="data:image/png;base64,{logo_base64}" alt="Zypher Logo" class="logo">', unsafe_allow_html=True)
+
 st.markdown('<h1>Build Your Path</h1>', unsafe_allow_html=True)
 st.markdown('<p class="subtitle">Tell us about your academic journey and passions.</p>', unsafe_allow_html=True)
 
@@ -287,21 +289,6 @@ if submitted:
                 st.write(f"- {interest}")
         
         st.info("Next, we'll use this to create your personalized learning roadmap!")
-        
-        # --- RAG + AGENTIC AI LOGIC ---
-        with st.spinner("Talking to the AI..."):
-            try:
-                # Call your new function to generate the plan
-                learning_plan = generate_plan_with_rag(course, semester, subjects, interests)
-                
-                # Store the generated plan in session state
-                st.session_state.plan = learning_plan
-                
-                st.balloons()
-                st.success("Plan generated successfully!")
-                st.switch_page("pages/plan.py") # <-- THIS IS THE CORRECTED LINE
-            except Exception as e:
-                st.error(f"An error occurred: {e}. Please try again.")
 
 st.markdown('</div>', unsafe_allow_html=True) # Close form-card
 st.markdown('</div>', unsafe_allow_html=True) # Close main-container
