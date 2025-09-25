@@ -103,18 +103,18 @@ page_styling = f"""
     .navbar .brand-name {{
         font-size: 1.5rem;
         font-weight: bold;
-        color: #002e00;
+        color: #002e00 !important ;
         text-decoration: none;
     }}
     .navbar .nav-links a {{
-        color: #004d00;
+        color: #004d00 !important ;
         text-decoration: none;
         margin: 0 15px;
         font-weight: 500;
         transition: color 0.3s;
     }}
     .navbar .nav-links a.active, .navbar .nav-links a:hover {{
-        color: #002e00;
+        color: #002e00 !important ;
         font-weight: 600;
     }}
     
@@ -124,21 +124,7 @@ page_styling = f"""
         flex-direction: column;
         align-items: flex-start; /* EDITED: Changed from 'center' to 'flex-start' to left-align the card */
         padding: 80px 2rem 2rem 2rem; /* Added padding-top to push content below navbar */
-        color: #002e00; s
-    }}
-
-    /* --- Glass Card for the Form --- */
-    .form-card {{
-        background: rgba(255, 255, 255, 0.45);
-        backdrop-filter: blur(12px);
-        -webkit-backdrop-filter: blur(12px);
-        border-radius: 20px;
-        border: 1px solid rgba(255, 255, 255, 0.2);
-        box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.2);
-        padding: 30px;
-        width: 100%;
-        max-width: 700px;
-        text-align: left; /* EDITED: Changed from 'center' to 'left' to align text */
+        color: #002e00 !important ; 
     }}
 
     h1 {{
@@ -150,7 +136,7 @@ page_styling = f"""
     p.subtitle {{
         font-size: 1.1rem;
         margin-bottom: 25px;
-        color: #004d00;
+        color: #004d00 !important;
     }}
 
     /* --- Styling Streamlit Widgets for HIGH CONTRAST --- */
@@ -176,12 +162,12 @@ page_styling = f"""
         background: rgba(255, 255, 255, 0.8);
         margin: 0 5px;
         transition: background-color 0.3s;
-        color: #004d00;
+        color: #004d00 !important;
         border: 1px solid rgba(0, 0, 0, 0.2);
     }}
     [data-testid="stRadio"] label:has(input:checked) {{
         background-color: #4CAF50;
-        color: white;
+        text-color: #002e00 !important;
         border: 1px solid #4CAF50;
     }}
     [data-testid="stFormSubmitButton"] button {{
@@ -272,7 +258,6 @@ if submitted:
         st.warning("Please fill out all the fields to generate your plan!")
     else:
         st.success("Great! Here's the information we've gathered:")
-        st.balloons()
         
         col1, col2 = st.columns(2)
         with col1:
